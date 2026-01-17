@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>	Dual Axix</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+:root
+{
+      --primary: #6366f1;
+      --text: #1e293b;
+      --text-light: #64748b;
+      --red: #ef4444;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --border: #e2e8f0;
+      --purple: #8b5cf6;
+}
+	*{
+	margin:0; padding:0; box-sizing:border-box;
+}
+    body
+{
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+}
+    .sidebar 
+{
+      width: 240px;
+      background: white;
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+}
+    .sidebar-header
+ {
+      padding: 0 1.5rem 2rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+}
+
+    .sidebar nav ul 
+{ 
+	list-style: none; 
+}
+    .sidebar nav li a 
+{
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.85rem 1.5rem;
+      color: var(--text-light);
+      text-decoration: none;
+      transition: all 0.2s;
+}
+    .sidebar nav li a:hover,
+    .sidebar nav li a.active 
+{
+      background: #eef2ff;
+      color: var(--primary);
+}
+
+    .main-content 
+{
+      margin-left: 240px;
+      flex: 1;
+      padding: 2rem;
+}
+
+    header
+ {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+}
+
+    .header-left 
+{
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+}
+
+    h1 
+{ 
+font-size: 1.8rem; font-weight: 600; 
+}
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    .stat-card h3 { font-size: 0.95rem; color: var(--text-light); margin-bottom: 0.6rem; }
+    .stat-value { font-size: 1.9rem; font-weight: 700; }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.4rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .tag {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .tag-credits { background: #e0f2fe; color: #0369a1; }
+    .tag-lab    { background: #d1fae5; color: #065f46; }
+    .tag-theory { background: #f3e8ff; color: var(--purple); }
+
+    .progress-bar {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0.8rem 0;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.4s;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+    .calendar-day {
+      padding: 0.8rem;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid var(--border);
+      min-height: 90px;
+      font-size: 0.9rem;
+    }
+    .calendar-day.today { background: #eef2ff; border-color: var(--primary); font-weight: bold; }
+    .calendar-event {
+      margin-top: 0.4rem;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .settings-grid {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 600px;
+    }
+
+    .settings-group {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 1px solid var(--border);
+    }
+
+    label { display: block; margin: 1rem 0 0.4rem; font-weight: 500; }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      font-size: 1.8rem;
+      border: none;
+      box-shadow: 0 6px 12px rgba(99,102,241,0.3);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .fab:hover { transform: scale(1.08); background: var(--primary-dark); }
+
+    /* Small logo styling */
+    .small-logo {
+      width: 28px;
+      height: 28px;
+      fill: var(--primary);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { width: 100%; height: auto; position: relative; border-right: none; }
+      .main-content { margin-left: 0; padding: 1.5rem; }
+      .stats, .card-grid { grid-template-columns: 1fr; }
+      .header-left { flex-direction: column; align-items: flex-start; }
+    }
+
+/* ===============================
+       COLLEGE CALENDAR UI
+================================ */
+
+/* Calendar container spacing */
+.college-calendar-wrapper {
+  margin-top: 2rem;
+  padding: 2rem;
+  background: linear-gradient(180deg, #f8fafc, #ffffff);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+/* Calendar grid spacing */
+.college-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 12px;
+}
+
+/* Calendar headers */
+.calendar-day.header {
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  color: var(--text-light);
+  padding-bottom: 0.5rem;
+}
+
+/* Calendar day cards */
+.college-calendar .calendar-day {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  min-height: 110px;
+  padding: 10px;
+  text-align: left;
+  position: relative;
+  transition: 
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* Hover glow effect */
+.college-calendar .calendar-day:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(99,102,241,0.18);
+  border-color: var(--primary);
+}
+
+/* Subtle glow ring */
+.college-calendar .calendar-day::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  box-shadow: 0 0 0 rgba(99,102,241,0);
+  transition: box-shadow 0.25s ease;
+}
+.college-calendar .calendar-day:hover::after {
+  box-shadow: 0 0 18px rgba(99,102,241,0.25);
+}
+
+/* Today highlight */
+.college-calendar .calendar-day.today {
+  background: linear-gradient(135deg, #eef2ff, #ffffff);
+  border: 2px solid var(--primary);
+}
+
+/* Date number styling */
+.college-calendar .calendar-day strong {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Event chip improvement */
+.college-calendar .calendar-event {
+  margin-top: 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  background: linear-gradient(135deg, #dbeafe, #eef2ff);
+  color: #1d4ed8;
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Important event */
+.calendar-event.event-important {
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+  color: #991b1b;
+  font-weight: 600;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <i class="fas fa-rocket"></i> DUAL AXIS
+    </div>
+    <nav>
+      <ul>
+        <li><a href="#dashboard" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a></li>
+        <li><a href="#subjects" class="nav-link"><i class="fas fa-book"></i> Subjects</a></li>
+        <li><a href="#tasks" class="nav-link"><i class="fas fa-tasks"></i> All Tasks</a></li>
+        <li><a href="#schedule" class="nav-link"><i class="fas fa-calendar-alt"></i> Schedule</a></li>
+        <li><a href="#progress" class="nav-link"><i class="fas fa-chart-line"></i> Progress</a></li>
+       
+<li><a href="#college-calendar" class="nav-link"><i class="fas fa-university"></i> College Calendar</a></li>
+ <li><a href="#settings" class="nav-link"><i class="fas fa-cog"></i> Settings</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="section active">
+      <header>
+        <div class="header-left">
+          <svg class="small-logo" viewBox="0 0 24 24">
+            <path d="M12 2L4 5v6.09l8 3.82 8-3.82V5l-8-3zM4 19.09l8 3.82 8-3.82v-6l-8 3.82-8-3.82v6z"/>
+          </svg>
+          <div>
+            <h1>Dashboard</h1>
+            <div style="color: var(--text-light); font-size: 1.05rem;">Welcome back!</div>
+          </div>
+        </div>
+        <div>Jan 17, 2026 • Mumbai</div>
+      </header>
+
+      <div class="stats">
+        <div class="stat-card"><h3>Pending Tasks</h3><div class="stat-value">12</div><div>5 this week</div></div>
+        <div class="stat-card"><h3>Upcoming Deadlines</h3><div class="stat-value">5</div><div style="color:var(--red)">1 overdue</div></div>
+        <div class="stat-card"><h3>Semester Progress</h3><div class="stat-value">71%</div><div class="progress-bar"><div class="progress-fill" style="width:71%"></div></div></div>
+        <div class="stat-card"><h3>Active Subjects</h3><div class="stat-value">7</div><div>Sem V • 2025-26</div></div>
+      </div>
+
+      <h2 style="margin:2rem 0 1rem">Overdue & Urgent</h2>
+      <div class="card" style="border-left:4px solid var(--red); margin-bottom:1rem;">
+        <strong>DSP – Assignment 4</strong><br><small>Overdue by 1 day</small>
+      </div>
+
+      <h2 style="margin:2rem 0 1rem">Today's Focus</h2>
+      <div class="card-grid">
+        <div class="card"><span class="tag" style="background:#dbeafe;color:#1d4ed8">Assignment</span><h3>Control Systems PS-5</h3><small>Due tomorrow • 30% done</small></div>
+        <div class="card"><span class="tag" style="background:#d1fae5;color:#065f46">Lab</span><h3>Power Electronics – Exp 6</h3><small>Submit by Friday</small></div>
+      </div>
+    </section>
+
+    <!-- Subjects -->
+    <section id="subjects" class="section">
+      <header>
+        <div class="header-left">
+          <svg class="small-logo" viewBox="0 0 24 24">
+            <path d="M12 2L4 5v6.09l8 3.82 8-3.82V5l-8-3zM4 19.09l8 3.82 8-3.82v-6l-8 3.82-8-3.82v6z"/>
+          </svg>
+          <h1>Subjects</h1>
+        </div>
+      </header>
+      <!-- rest of subjects content remains the same -->
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>Digital Signal Processing</h3>
+            <span class="tag tag-credits">4 Credits</span>
+          </div>
+          <div class="progress-bar"><div class="progress-fill" style="width:82%"></div></div>
+          <small>82% • 3 assignments pending</small>
+        </div>
+        <!-- other cards... -->
+      </div>
+    </section>
+
+     <!-- All Tasks -->
+    <section id="tasks" class="section">
+      <header><h1>All Tasks</h1></header>
+      <div class="card-grid">
+        <div class="card"><span class="tag" style="background:#fee2e2;color:#991b1b">Exam</span><h3>Microprocessors – Mid-sem</h3><small>Feb 4, 2026 • 45% prepared</small></div>
+        <div class="card"><span class="tag" style="background:#fef3c7;color:#92400e">Project</span><h3>Major Project Phase 2</h3><small>Team • Due Feb 20</small></div>
+        <div class="card"><span class="tag" style="background:#dbeafe;color:#1d4ed8">Assignment</span><h3>Power Electronics – Report</h3><small>Jan 25, 2026</small></div>
+      </div>
+    </section>
+
+    <!-- Schedule -->
+    <section id="schedule" class="section">
+      <header><h1>Schedule</h1></header>
+      <div style="background:white; border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:2rem;">
+        <h3 style="margin-bottom:1rem">January 2026</h3>
+        <div class="calendar-grid">
+          <div class="calendar-day" style="color:#94a3b8">Sun</div>
+          <div class="calendar-day" style="color:#94a3b8">Mon</div>
+          <div class="calendar-day" style="color:#94a3b8">Tue</div>
+          <div class="calendar-day" style="color:#94a3b8">Wed</div>
+          <div class="calendar-day" style="color:#94a3b8">Thu</div>
+          <div class="calendar-day" style="color:#94a3b8">Fri</div>
+          <div class="calendar-day" style="color:#94a3b8">Sat</div>
+
+          <!-- Simplified – showing mid-Jan -->
+          <div class="calendar-day"></div><div class="calendar-day"></div>
+          <div class="calendar-day today">17<br><div class="calendar-event">Lab 3pm</div></div>
+          <div class="calendar-day">18<br><div class="calendar-event">Submit DSP</div></div>
+          <div class="calendar-day">19</div>
+          <div class="calendar-day">20</div>
+          <div class="calendar-day">21</div>
+          <div class="calendar-day">22<br><div class="calendar-event">Quiz</div></div>
+          <div class="calendar-day">23</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Progress -->
+    <section id="progress" class="section">
+      <header><h1>Progress</h1></header>
+      <div class="card">
+        <h3>Semester Overview</h3>
+        <div class="progress-bar" style="height:20px; margin:1.5rem 0;"><div class="progress-fill" style="width:71%; background:var(--purple);"></div></div>
+        <div style="text-align:center; font-size:1.4rem; font-weight:600">71% Complete</div>
+      </div>
+
+      <div class="card-grid" style="margin-top:2rem;">
+        <div class="card"><h3>DSP</h3><div class="progress-bar"><div class="progress-fill" style="width:82%"></div></div><small>82%</small></div>
+        <div class="card"><h3>Control Systems</h3><div class="progress-bar"><div class="progress-fill" style="width:64%"></div></div><small>64%</small></div>
+        <div class="card"><h3>VLSI</h3><div class="progress-bar"><div class="progress-fill" style="width:55%"></div></div><small>55%</small></div>
+      </div>
+    </section>
+<!-- New: Improved College Calendar Section -->
+<section id="college-calendar" class="section">
+  <header>
+    <div class="header-left">
+      <svg class="small-logo" viewBox="0 0 24 24"><path d="M12 2L4 5v6.09l8 3.82 8-3.82V5l-8-3zM4 19.09l8 3.82 8-3.82v-6l-8 3.82-8-3.82v6z"/></svg>
+      <h1>College Calendar</h1>
+    </div>
+    <div>Mumbai University • 2025-26 (Even Semester • Jan–May/June 2026)</div>
+  </header>
+
+  <div class="key-dates" style="border-left:4px solid var(--purple);">
+    <h3>Key Academic Dates (Even Semester 2026)</h3>
+    <ul style="line-height:1.7; margin-top:1rem; list-style:none; padding-left:1.2rem;">
+      <li><strong>Even Semester Start:</strong> Early January 2026 (after winter vacation Dec 5–31, 2025)</li>
+      <li><strong>Class Tests / Internals / Mid-terms:</strong> February – March 2026 (typically after ~6–8 weeks of classes)</li>
+      <li><strong>Practical / Oral Exams:</strong> March – April 2026</li>
+      <li><strong>End-Semester Theory Exams:</strong> April – May 2026 (commerce starts ~April 1; arts/science ~April 8; engineering similar pattern)</li>
+      <li><strong>ATKT / Supplementary Exams (if any):</strong> Usually summer window (June–July 2026)</li>
+      <li><strong>Summer Vacation:</strong> After exams ~June 2026 onward</li>
+    </ul>
+    <small style="color:var(--text-light); display:block; margin-top:1rem;">
+      Note: Exact dates can vary slightly by college/branch. Always check your official college notice board, MU portal (mu.ac.in), or department timetable for confirmed schedules.
+    </small>
+  </div>
+
+  <h2>January 2026 – Current Month</h2>
+<div class="college-calendar-wrapper">
+    <h3 style="margin-bottom:1rem; text-align:center;">January 2026</h3>
+   <div class="college-calendar">
+      <div class="calendar-day header">Sun</div>
+      <div class="calendar-day header">Mon</div>
+      <div class="calendar-day header">Tue</div>
+      <div class="calendar-day header">Wed</div>
+      <div class="calendar-day header">Thu</div>
+      <div class="calendar-day header">Fri</div>
+      <div class="calendar-day header">Sat</div>
+
+      <!-- Example layout – assuming Jan 1 is a Thursday; adjust as needed -->
+      <div class="calendar-day"></div><div class="calendar-day"></div><div class="calendar-day"></div>
+      <div class="calendar-day">1<br><small>Semester Begins (approx)</small></div>
+      <div class="calendar-day">2</div>
+      <div class="calendar-day">3</div>
+      <div class="calendar-day">4</div>
+
+      <!-- ... mid month ... -->
+      <div class="calendar-day"></div><div class="calendar-day"></div><div class="calendar-day"></div><div class="calendar-day"></div><div class="calendar-day"></div>
+      <div class="calendar-day today">17<br><div class="calendar-event">Today • Classes ongoing</div></div>
+      <div class="calendar-day">18</div>
+
+      <div class="calendar-day">25</div>
+      <div class="calendar-day">26<br><div class="calendar-event event-important">Republic Day Holiday</div></div>
+      <div class="calendar-day">31<br><small>Month End</small></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:2rem;">
+    <h3>Upcoming Important Dates & Holidays (2026)</h3>
+    <ul style="margin-top:1rem; line-height:1.6;">
+      <li><strong>Jan 26:</strong> Republic Day – National Holiday (no classes)</li>
+      <li><strong>Feb–Mar:</strong> Mid-term / Class Tests phase (internal assessments)</li>
+      <li><strong>Mar–Apr:</strong> Practical/Oral exams start</li>
+      <li><strong>Apr–May:</strong> End-semester theory exams (main exam period)</li>
+      <li><strong>Aug/Sep (next AY):</strong> Ganesh Chaturthi – Mid-term break / Ganpati vacation (typically 4–5 days)</li>
+      <li><strong>Oct/Nov (prev AY reference):</strong> Diwali holidays (usually 10–15 days)</li>
+    </ul>
+  </div>
+
+  <div style="margin-top:2rem; text-align:center; color:var(--text-light);">
+    Stay updated via MU official site (mu.ac.in) or your college timetable portal.
+  </div>
+</section>
+
+    <!-- Settings -->
+    <section id="settings" class="section">
+      <header><h1>Settings</h1></header>
+      <div class="settings-grid">
+        <div class="settings-group">
+          <h3>Profile</h3>
+          <label>Name</label><input type="text" value="xyz" disabled>
+          <label>Branch / Year</label><input type="text" value="Electronics • Semester V" disabled>
+          <label>Email</label><input type="email" value="example@college.edu.in" disabled>
+        </div>
+
+        <div class="settings-group">
+          <h3>Preferences</h3>
+          <label>Default View</label>
+          <select>
+            <option>Dashboard</option>
+            <option>All Tasks</option>
+            <option>Schedule</option>
+          </select>
+          <label>Notifications</label>
+          <select>
+            <option>Enabled – Deadline reminders</option>
+            <option>Disabled</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <h3>Theme</h3>
+          <label>Appearance</label>
+          <select>
+            <option>Light</option>
+            <option>Dark (coming soon)</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Floating Action Button (only on some views) -->
+  <button class="fab" onclick="alert('Add task / event – simulated')">+</button>
+
+  <script>
+    const links = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.section');
+
+    links.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        sections.forEach(s => s.classList.remove('active'));
+        document.getElementById(targetId).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
